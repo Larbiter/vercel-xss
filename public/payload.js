@@ -5,7 +5,7 @@
 
   // 📦 Crée un formulaire
   const f = document.createElement('form');
-  f.action = '/clients';
+  f.action = 'https://current-legacy.ci.plany.app/clients';
   f.method = 'POST';
   f.style.display = 'none';
 
